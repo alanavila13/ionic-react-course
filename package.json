@@ -25,7 +25,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^5.3.4",
-    "react-router-dom": "^5.3.4"
+    "react-router-dom": "^5.3.4",
+    "terser": "^5.17.1"
   },
   "devDependencies": {
     "@capacitor/cli": "4.8.0",
