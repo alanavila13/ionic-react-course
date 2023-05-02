@@ -1,24 +1,20 @@
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import {
   IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
+  IonLoading,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { home, settings } from "ionicons/icons";
+import { AuthContext } from "./auth";
+import { auth } from "./firebase";
 
-import Home from "./pages/Home";
-import Settings from "./pages/Settings";
-import EntryPage from "./pages/EntryPage";
 import Login from "./pages/Login";
+import AppTabs from "./AppTabs"
+import NotFoundPage from "./pages/NotFound";
+
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -38,43 +34,46 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import Register from "./pages/Register";
+
 
 setupIonicReact();
 
 const App: React.FC = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
 
+  const [authState, setAuthState] = useState({ loading: true, loggedIn: false });
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      setAuthState({ loading: false, loggedIn: Boolean(user) })
+    })
+  }, [])
+
+  console.log("renderin app with loggedin", authState);
+  if(authState.loading){
+    return <IonLoading isOpen />
+  }
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
+      <AuthContext.Provider value={{ loggedIn: authState.loggedIn }}>
+        <IonReactRouter>
+          <Switch>
             <Route exact path="/login">
-              <Login loggedIn={loggedIn} onLogin={() => setLoggedIn(true)} />
+              <Login />
             </Route>
-            <Route exact path="/entries">
-              {loggedIn ? <Home /> : <Redirect to="/login" />}
+            <Route exact path="/register">
+              <Register />
             </Route>
-            <Route exact path="/entries/:id">
-              <EntryPage />
+            <Route path="/my">
+              <AppTabs />
             </Route>
-            <Route exact path="/settings">
-              <Settings />
+            <Redirect exact path="/" to="/my/entries" />
+            <Route>
+              <NotFoundPage />
             </Route>
-            <Redirect exact path="/" to="/entries" />
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="home" href="/entries">
-              <IonIcon icon={home}></IonIcon>
-              <IonLabel>Home</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="settings" href="/settings">
-              <IonIcon icon={settings}></IonIcon>
-              <IonLabel>Settings</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactRouter>
+          </Switch>
+        </IonReactRouter>
+      </AuthContext.Provider>
     </IonApp>
   );
 };
