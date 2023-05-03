@@ -8,9 +8,21 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
-import { entries } from "../helpers/data";
+import { Entry, toEntry } from "../models";
+
+import { firestore } from "../firebase";
+import { useEffect, useState } from "react";
 
 const Home: React.FC = () => {
+  const [entries, setEntries] = useState<Entry[]>([]);
+
+  useEffect(() => {
+    const entriesRef = firestore.collection("entries");
+    entriesRef.get().then(({ docs }) => {
+      setEntries(docs.map(toEntry));
+    });
+  }, []);
+
   return (
     <IonPage>
       <IonHeader>
@@ -21,7 +33,11 @@ const Home: React.FC = () => {
       <IonContent className="ion-padding">
         <IonList>
           {entries.map((entry) => (
-            <IonItem button key={entry.id} routerLink={`/my/entries/${entry.id}`}>
+            <IonItem
+              button
+              key={entry.id}
+              routerLink={`/my/entries/${entry.id}`}
+            >
               {entry.title}
             </IonItem>
           ))}

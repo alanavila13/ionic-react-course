@@ -1,20 +1,12 @@
 import { Redirect, Route, Switch } from "react-router-dom";
-import {
-  IonApp,
-  IonLoading,
-  setupIonicReact,
-} from "@ionic/react";
+import { IonApp, IonLoading, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 
-import { useEffect, useState } from "react";
-
-import { AuthContext } from "./auth";
-import { auth } from "./firebase";
+import { AuthContext, useAuthInit } from "./auth";
 
 import Login from "./pages/Login";
-import AppTabs from "./AppTabs"
+import AppTabs from "./AppTabs";
 import NotFoundPage from "./pages/NotFound";
-
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -36,26 +28,18 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import Register from "./pages/Register";
 
-
 setupIonicReact();
 
 const App: React.FC = () => {
+  const { loading, auth } = useAuthInit();
 
-  const [authState, setAuthState] = useState({ loading: true, loggedIn: false });
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setAuthState({ loading: false, loggedIn: Boolean(user) })
-    })
-  }, [])
-
-  console.log("renderin app with loggedin", authState);
-  if(authState.loading){
-    return <IonLoading isOpen />
+  if (loading) {
+    return <IonLoading isOpen />;
   }
+  console.log("renderin app with loggedin", auth);
   return (
     <IonApp>
-      <AuthContext.Provider value={{ loggedIn: authState.loggedIn }}>
+      <AuthContext.Provider value={auth}>
         <IonReactRouter>
           <Switch>
             <Route exact path="/login">
