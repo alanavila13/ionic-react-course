@@ -34,6 +34,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import { useAuth } from "./auth";
+import NewEntry from "./pages/NewEntry";
 
 setupIonicReact();
 
@@ -48,8 +49,11 @@ const AppTabs: React.FC = ({  }) => {
                 <Route exact path="/my/entries">
                     <Home />
                 </Route>
-                <Route exact path="/my/entries/:id">
+                <Route exact path="/my/entries/view/:id">
                     <EntryPage />
+                </Route>
+                <Route exact path="/my/entries/add">
+                    <NewEntry />
                 </Route>
                 <Route exact path="/my/settings">
                     <Settings />

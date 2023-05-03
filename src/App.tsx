@@ -36,7 +36,6 @@ const App: React.FC = () => {
   if (loading) {
     return <IonLoading isOpen />;
   }
-  console.log("renderin app with loggedin", auth);
   return (
     <IonApp>
       <AuthContext.Provider value={auth}>
