@@ -4,10 +4,12 @@ import {
   IonFabButton,
   IonHeader,
   IonIcon,
+  IonImg,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
+  IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -48,6 +50,9 @@ const Home: React.FC = () => {
               key={entry.id}
               routerLink={`/my/entries/view/${entry.id}`}
             >
+            <IonThumbnail slot="end">
+              <IonImg src={entry.pictureUrl} />
+            </IonThumbnail>
               <IonLabel>
                 <h2>{entry.date}</h2>
                 <h3>{entry.title}</h3>
